@@ -1,10 +1,12 @@
 import { Client } from 'src/clients/entities/client.entity';
+import { Production } from 'src/productions/entities/production.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -33,7 +35,10 @@ export class Project {
   updatedAt: Date;
 
   @ManyToOne(() => Client, (client) => client.projects, {
-    onDelete:'CASCADE'
+    onDelete: 'CASCADE',
   })
   client: Client;
+
+  @OneToMany(() => Production, (Production) => Production.project)
+  productions: Production[];
 }
