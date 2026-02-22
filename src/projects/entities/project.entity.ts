@@ -1,7 +1,10 @@
+import { Client } from 'src/clients/entities/client.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,4 +31,9 @@ export class Project {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Client, (client) => client.projects, {
+    onDelete:'CASCADE'
+  })
+  client: Client;
 }

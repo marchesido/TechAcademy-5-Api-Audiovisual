@@ -1,10 +1,12 @@
 import { create } from 'domain';
+import { Project } from 'src/projects/entities/project.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,4 +32,7 @@ export class Client {
   deletedAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Project, (project) => project.client)
+  projects: Project[];
 }
