@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 @Entity('clients')
 export class Client {
   @PrimaryGeneratedColumn('uuid')
