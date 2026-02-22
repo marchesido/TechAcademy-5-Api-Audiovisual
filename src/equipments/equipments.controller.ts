@@ -10,6 +10,9 @@ import {
 import { EquipmentsService } from './equipments.service';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { UpdateEquipmentDto } from './dto/update-equipment.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags ("equipaments")
 
 @Controller('equipments')
 export class EquipmentsController {

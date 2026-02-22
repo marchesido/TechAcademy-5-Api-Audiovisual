@@ -10,6 +10,9 @@ import {
 import { ProductionsService } from './productions.service';
 import { CreateProductionDto } from './dto/create-production.dto';
 import { UpdateProductionDto } from './dto/update-production.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags ("productions")
 
 @Controller('productions')
 export class ProductionsController {
