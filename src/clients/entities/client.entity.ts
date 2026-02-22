@@ -18,7 +18,7 @@ export class Client {
   @Index({ unique: true })
   email: string;
   @Column({ length: 150, nullable: false })
-  phone: number;
+  phone: string;
   @Column({ length: 11, unique: true })
   cpf: string;
   @Column({ length: 150, nullable: true })
