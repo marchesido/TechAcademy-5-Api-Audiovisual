@@ -26,9 +26,9 @@ export class ProjectEquipment {
   createdAt: Date;
 
 
-  //@ManyToOne(() => Project, (project) => project.id, { onDelete: 'CASCADE' })
-  //project: Project;
+  @ManyToOne(() => Project, (project) => project.id, { onDelete: 'CASCADE' })
+  project: Project;
 
-  //@ManyToOne(() => Equipment, (equipment) => equipment.id)
-  //equipment: Equipment;
+  @ManyToOne(() => Equipment, (equipment) => equipment.id)
+  equipment: Equipment;
 }
