@@ -24,7 +24,7 @@ export class Client {
   phone: string;
   @Column({ length: 11, unique: true })
   cpf: string;
-  @Column({ length: 150, nullable: true })
+  @Column({ length: 150, nullable: false })
   company: string;
   @CreateDateColumn()
   createdAt: Date;
