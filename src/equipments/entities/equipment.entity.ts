@@ -1,8 +1,12 @@
+import { ProjectEquipment } from 'src/project-equipments/entities/project-equipment.entity';
+import { Project } from 'src/projects/entities/project.entity';
+
 import {
   Column,
   CreateDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -32,4 +36,11 @@ export class Equipment {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => Project, (project) => project.client)
+  projects: Project[];
+
+  @OneToMany(() => ProjectEquipment, (projectEquipment) => projectEquipment.equipment)
+  projectEquipments: ProjectEquipment[];
+
 }
