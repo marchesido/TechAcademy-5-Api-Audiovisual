@@ -17,8 +17,9 @@ export class EquipmentsService {
     return await this.repository.save(Equipment);
   }
 
-  findAll() {
-    return `This action returns all equipments`;
+  async findAll() {
+    const equipment = await this.repository.find();
+    return equipment;
   }
 
   findOne(id: number) {
