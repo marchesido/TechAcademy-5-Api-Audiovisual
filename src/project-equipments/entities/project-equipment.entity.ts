@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -25,10 +26,17 @@ export class ProjectEquipment {
   @CreateDateColumn()
   createdAt: Date;
 
+  @Column()
+  projectId: string;
 
-  @ManyToOne(() => Project, (project) => project.id, { onDelete: 'CASCADE' })
+  @Column()
+  equipmentId: string;
+
+  @ManyToOne(() => Project, (project) => project.id, { onDelete: 'CASCADE', nullable: false })
+  @JoinColumn({ name: 'projectId' })
   project: Project;
 
-  @ManyToOne(() => Equipment, (equipment) => equipment.id)
+  @ManyToOne(() => Equipment, (equipment) => equipment.id,{nullable: false})
+  @JoinColumn({ name: 'equipmentId' })
   equipment: Equipment;
 }
