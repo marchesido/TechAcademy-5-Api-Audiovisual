@@ -31,7 +31,7 @@ export class ProjectEquipmentsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.projectEquipmentsService.findOne(+id);
+    return this.projectEquipmentsService.findOne(id);
   }
 
   @Patch(':id')
@@ -39,11 +39,11 @@ export class ProjectEquipmentsController {
     @Param('id') id: string,
     @Body() updateProjectEquipmentDto: UpdateProjectEquipmentDto,
   ) {
-    return this.projectEquipmentsService.update(+id, updateProjectEquipmentDto);
+    return this.projectEquipmentsService.update(id, updateProjectEquipmentDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.projectEquipmentsService.remove(+id);
+    return this.projectEquipmentsService.remove(id);
   }
 }

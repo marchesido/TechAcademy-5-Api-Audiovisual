@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectEquipmentDto } from './dto/create-project-equipment.dto';
 import { UpdateProjectEquipmentDto } from './dto/update-project-equipment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,15 +23,32 @@ export class ProjectEquipmentsService {
     return project_equipment;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} projectEquipment`;
+async findOne(id: string): Promise<ProjectEquipment> {
+    const allocation = await this.repository.findOne({
+      where: { id },
+      relations: ['project', 'equipment'],
+    });
+
+    if (!allocation) {
+      throw new NotFoundException(`Alocação de equipamento com ID ${id} não encontrada`);
+    }
+
+    return allocation;
   }
 
-  update(id: number, updateProjectEquipmentDto: UpdateProjectEquipmentDto) {
-    return `This action updates a #${id} projectEquipment`;
+  async update(id: string, updateDto: UpdateProjectEquipmentDto): Promise<ProjectEquipment> {
+    const allocation = await this.findOne(id);
+
+    // Se houver troca de projeto ou equipamento no update
+    if (updateDto.projectId) allocation.project = { id: updateDto.projectId } as any;
+    if (updateDto.equipmentId) allocation.equipment = { id: updateDto.equipmentId } as any;
+
+    this.repository.merge(allocation, updateDto);
+    return await this.repository.save(allocation);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} projectEquipment`;
+  async remove(id: string): Promise<void> {
+    const allocation = await this.findOne(id);
+    await this.repository.remove(allocation);
   }
 }
