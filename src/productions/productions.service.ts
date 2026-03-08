@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductionDto } from './dto/create-production.dto';
 import { UpdateProductionDto } from './dto/update-production.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,19 +18,39 @@ export class ProductionsService {
     return await this.repository.save(Production);
   }
 
-  findAll() {
-    return `This action returns all productions`;
+  async findAll(): Promise<Production[]> {
+    return await this.repository.find({
+      relations: ['project'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} production`;
+  async findOne(id: string): Promise<Production> {
+    const production = await this.repository.findOne({
+      where: { id },
+      relations: ['project'],
+    });
+
+    if (!production) {
+      throw new NotFoundException(`Produção com ID ${id} não encontrada`);
+    }
+
+    return production;
   }
 
-  update(id: number, updateProductionDto: UpdateProductionDto) {
-    return `This action updates a #${id} production`;
+  async update(id: string, updateProductionDto: UpdateProductionDto): Promise<Production> {
+    const production = await this.findOne(id);
+    
+    if (updateProductionDto.projectId) {
+      production.project = { id: updateProductionDto.projectId } as any;
+    }
+
+    this.repository.merge(production, updateProductionDto);
+    return await this.repository.save(production);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} production`;
+  async remove(id: string): Promise<void> {
+    const production = await this.findOne(id);
+    await this.repository.remove(production);
   }
 }

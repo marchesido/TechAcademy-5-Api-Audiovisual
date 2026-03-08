@@ -29,7 +29,7 @@ export class ProductionsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productionsService.findOne(+id);
+    return this.productionsService.findOne(id);
   }
 
   @Patch(':id')
@@ -37,11 +37,11 @@ export class ProductionsController {
     @Param('id') id: string,
     @Body() updateProductionDto: UpdateProductionDto,
   ) {
-    return this.productionsService.update(+id, updateProductionDto);
+    return this.productionsService.update(id, updateProductionDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productionsService.remove(+id);
+    return this.productionsService.remove(id);
   }
 }
