@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Repository } from 'typeorm';
@@ -13,8 +13,8 @@ export class ClientsService {
   ) {}
 
   async create(createClientDto: CreateClientDto) {
-    const Client = this.repository.create(createClientDto);
-    return await this.repository.save(Client);
+    const client = this.repository.create(createClientDto);
+    return await this.repository.save(client);
   }
 
   async findAll() {
@@ -22,15 +22,20 @@ export class ClientsService {
     return clients;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+   async findOne(id: string): Promise<Client> {
+    const client = await this.repository.findOne({ where: { id } });
+    if (!client) throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
+    return client;
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  async update(id: string, updateClientDto: UpdateClientDto): Promise<Client> {
+    const client = await this.findOne(id);
+    this.repository.merge(client, updateClientDto);
+    return await this.repository.save(client);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  async remove(id: string): Promise<void> {
+    const client = await this.findOne(id);
+    await this.repository.softRemove(client);
   }
 }
