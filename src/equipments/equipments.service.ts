@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { UpdateEquipmentDto } from './dto/update-equipment.dto';
 import { Equipment } from './entities/equipment.entity';
@@ -22,15 +22,26 @@ export class EquipmentsService {
     return equipment;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} equipment`;
+  async findOne(id: string): Promise<Equipment> {
+    const equipment = await this.repository.findOne({ where: { id } });
+    
+    if (!equipment) {
+      throw new NotFoundException(`Equipamento com ID ${id} não encontrado`);
+    }
+    
+    return equipment;
   }
 
-  update(id: number, updateEquipmentDto: UpdateEquipmentDto) {
-    return `This action updates a #${id} equipment`;
+  async update(id: string, updateEquipmentDto: UpdateEquipmentDto): Promise<Equipment> {
+    const equipment = await this.findOne(id);
+    
+    this.repository.merge(equipment, updateEquipmentDto);
+    
+    return await this.repository.save(equipment);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} equipment`;
+  async remove(id: string): Promise<void> {
+    const equipment = await this.findOne(id);
+    await this.repository.delete(id);
   }
 }
