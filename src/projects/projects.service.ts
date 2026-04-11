@@ -45,18 +45,21 @@ export class ProjectsService {
   async update(id: string, updateProjectDto: UpdateProjectDto): Promise<Project> {
     const project = await this.findOne(id);
 
-    // Se houver alteração de cliente, atualizamos a referência
-    if (updateProjectDto.clientId) {
-      project.client = { id: updateProjectDto.clientId } as any;
+    // Separamos clientId dos outros dados para não corromper o merge da entidade
+    const { clientId, ...restData } = updateProjectDto;
+
+    // Se houver alteração de cliente, atualizamos a referência real da tabela
+    if (clientId) {
+      project.client = { id: clientId } as any;
     }
 
-    this.repository.merge(project, updateProjectDto);
+    this.repository.merge(project, restData);
     return await this.repository.save(project);
   }
 
   async remove(id: string): Promise<void> {
-    const project = await this.findOne(id);
-    // Como usamos CASCADE na Entity, deletar o projeto removerá as produções vinculadas
-    await this.repository.remove(project);
+    const project = await this.findOne(id); // Mantemos para validar se existe
+    // Utilizar .delete invoca o DELETE direto no banco de dados e aproveita o CASCADE do PostgreSQL nativamente
+    await this.repository.delete(id);
   }
 }
