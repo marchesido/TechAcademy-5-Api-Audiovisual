@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProjectEquipmentsModule } from './project-equipments/project-equipments.module';
 import { EquipmentsModule } from './equipments/equipments.module';
 import { ProductionsModule } from './productions/productions.module';
 import { ProjectsModule } from './projects/projects.module';
 import { ClientsModule } from './clients/clients.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductionEquipmentModule } from './production-equipment/production-equipment.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -26,7 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ProjectsModule,
     ProductionsModule,
     EquipmentsModule,
-    ProjectEquipmentsModule,
+    ProductionEquipmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
