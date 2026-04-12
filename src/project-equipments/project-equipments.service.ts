@@ -14,12 +14,20 @@ export class ProjectEquipmentsService {
       ) {}
 
   async create(createProjectEquipmentDto: CreateProjectEquipmentDto) {
-    const ProjectEquipment = this.repository.create(createProjectEquipmentDto)
-    return await this.repository.save(ProjectEquipment);
+    const { projectId, equipmentId, ...rest } = createProjectEquipmentDto;
+    const projectEquipment = this.repository.create({
+      ...rest,
+      project: { id: projectId } as any,
+      equipment: { id: equipmentId } as any
+    });
+    return await this.repository.save(projectEquipment);
   }
 
   async findAll() {
-    const project_equipment = await this.repository.find();
+    const project_equipment = await this.repository.find({
+      relations: ['project', 'equipment'],
+      order: { createdAt: 'DESC' }
+    });
     return project_equipment;
   }
 
@@ -38,17 +46,18 @@ async findOne(id: string): Promise<ProjectEquipment> {
 
   async update(id: string, updateDto: UpdateProjectEquipmentDto): Promise<ProjectEquipment> {
     const allocation = await this.findOne(id);
+    const { projectId, equipmentId, ...rest } = updateDto;
 
     // Se houver troca de projeto ou equipamento no update
-    if (updateDto.projectId) allocation.project = { id: updateDto.projectId } as any;
-    if (updateDto.equipmentId) allocation.equipment = { id: updateDto.equipmentId } as any;
+    if (projectId) allocation.project = { id: projectId } as any;
+    if (equipmentId) allocation.equipment = { id: equipmentId } as any;
 
-    this.repository.merge(allocation, updateDto);
+    this.repository.merge(allocation, rest);
     return await this.repository.save(allocation);
   }
 
   async remove(id: string): Promise<void> {
     const allocation = await this.findOne(id);
-    await this.repository.remove(allocation);
+    await this.repository.delete(id);
   }
 }
