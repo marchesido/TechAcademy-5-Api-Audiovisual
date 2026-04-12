@@ -32,7 +32,7 @@ export class ProjectsService {
   async findOne(id: string): Promise<Project> {
     const project = await this.repository.findOne({
       where: { id },
-      relations: ['client', 'productions', 'projectEquipments', 'projectEquipments.equipment'],
+      relations: ['client', 'productions'],
     });
 
     if (!project) {
