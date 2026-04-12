@@ -1,6 +1,4 @@
-import { ProjectEquipment } from 'src/project-equipments/entities/project-equipment.entity';
-import { Project } from 'src/projects/entities/project.entity';
-
+import { ProductionEquipment } from 'src/production-equipment/entities/production-equipment.entity';
 import {
   Column,
   CreateDateColumn,
@@ -37,10 +35,7 @@ export class Equipment {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Project, (project) => project.client)
-  projects: Project[];
-
-  @OneToMany(() => ProjectEquipment, (projectEquipment) => projectEquipment.equipment)
-  projectEquipments: ProjectEquipment[];
+  @OneToMany(() => ProductionEquipment, (productionEquipment) => productionEquipment.equipment)
+  productionEquipments: ProductionEquipment[];
 
 }

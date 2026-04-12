@@ -1,11 +1,14 @@
+import { ProductionEquipment } from 'src/production-equipment/entities/production-equipment.entity';
 import { Project } from 'src/projects/entities/project.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
 
 @Entity('productions')
 export class Production {
@@ -28,4 +31,7 @@ export class Production {
     onDelete: 'CASCADE',
   })
   project: Project;
+
+  @OneToMany(() => ProductionEquipment, (productionEquipment) => productionEquipment.production)
+  productionEquipments: ProductionEquipment[];
 }

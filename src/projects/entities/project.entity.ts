@@ -1,6 +1,5 @@
 import { Client } from 'src/clients/entities/client.entity';
 import { Production } from 'src/productions/entities/production.entity';
-import { ProjectEquipment } from 'src/project-equipments/entities/project-equipment.entity';
 import {
   Column,
   CreateDateColumn,
@@ -43,7 +42,4 @@ export class Project {
 
   @OneToMany(() => Production, (Production) => Production.project)
   productions: Production[];
-
-  @OneToMany(() => ProjectEquipment, (projectEquipment) => projectEquipment.project)
-  projectEquipments: ProjectEquipment[];
 }
