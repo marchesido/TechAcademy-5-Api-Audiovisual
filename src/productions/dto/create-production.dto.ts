@@ -7,8 +7,30 @@ import {
   IsString, 
   IsUUID, 
   Length, 
-  Min 
+  Min,
+  IsArray,
+  ValidateNested
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class ProductionEquipmentDto {
+  @IsUUID('4')
+  @IsNotEmpty()
+  equipmentId: string;
+
+  @IsNumber()
+  @Min(1)
+  quantity: number;
+
+  @IsDateString()
+  @IsNotEmpty()
+  usageDate: Date;
+
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @IsOptional()
+  customDailyCost?: number;
+}
 
 export class CreateProductionDto {
   @ApiProperty({ 
@@ -61,4 +83,10 @@ export class CreateProductionDto {
   @IsUUID('4', { message: 'O ID do projeto deve ser um UUID válido' })
   @IsNotEmpty({ message: 'O vínculo com um projeto é obrigatório' })
   projectId: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductionEquipmentDto)
+  @IsOptional()
+  productionEquipments?: ProductionEquipmentDto[];
 }
