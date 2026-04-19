@@ -42,7 +42,7 @@ export class ProductionsService {
     return this.findOne(savedProduction.id);
   }
 
-  async findAll(): Promise<Production[]> {
+  async findAll(skip?: number, take?: number): Promise<Production[]> {
     return await this.repository.find({
       relations: ['project', 'productionEquipments', 'productionEquipments.equipment'],
       order: { createdAt: 'DESC' },
