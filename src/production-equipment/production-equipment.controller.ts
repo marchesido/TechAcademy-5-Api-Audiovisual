@@ -29,8 +29,8 @@ export class ProductionEquipmentsController {
   }
 
   @Get()
-  findAll() {
-    return this.ProductionEquipmentsService.findAll();
+  findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
+    return this.ProductionEquipmentsService.findAll(skip ? +skip : undefined, take ? +take : undefined);
   }
 
   @Get(':id')
