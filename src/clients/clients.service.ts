@@ -17,8 +17,8 @@ export class ClientsService {
     return await this.repository.save(client);
   }
 
-  async findAll() {
-    const clients = await this.repository.find();
+  async findAll(skip?: number, take?: number) {
+    const clients = await this.repository.find({ skip, take });
     return clients;
   }
 
