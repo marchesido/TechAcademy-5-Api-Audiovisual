@@ -44,7 +44,7 @@ export class ProductionEquipmentsService {
     }
   }
 
-  async findAll() {
+  async findAll(skip?: number, take?: number) {
     const production_equipment = await this.repository.find({
       relations: ['production', 'equipment'],
       order: { createdAt: 'DESC' }
