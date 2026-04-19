@@ -9,6 +9,7 @@ import {
   Length, 
   Min 
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export enum EquipmentStatus {
   AVAILABLE = 'available',
@@ -68,6 +69,7 @@ export class CreateEquipmentDto {
     example: 250.00 
   })
   @IsNumber({ maxDecimalPlaces: 2 }, { message: 'O custo diário deve ser um número válido' })
+  @Type(() => Number)
   @Min(0, { message: 'O custo diário não pode ser negativo' })
   @IsNotEmpty({ message: 'O custo diário é obrigatório' })
   dailyCost: number;
