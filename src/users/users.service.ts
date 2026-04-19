@@ -45,9 +45,10 @@ export class UsersService implements OnModuleInit {
     return this.usersRepository.save(user);
   }
 
-  findAll(): Promise<User[]> {
+  findAll(skip?: number, take?: number): Promise<User[]> {
     return this.usersRepository.find({
-      select: ['id', 'name', 'email', 'role', 'createdAt', 'updatedAt']
+      select: ['id', 'name', 'email', 'role', 'createdAt', 'updatedAt'],
+      skip, take
     });
   }
 
