@@ -21,7 +21,7 @@ export class ProjectsService {
     return await this.repository.save(project);
   }
 
-  async findAll(): Promise<Project[]> {
+  async findAll(skip?: number, take?: number): Promise<Project[]> {
     // Retorna os projetos incluindo os dados do Cliente e as Produções vinculadas
     return await this.repository.find({
       relations: ['client', 'productions'],
