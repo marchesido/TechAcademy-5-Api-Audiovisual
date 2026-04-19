@@ -9,7 +9,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-
 @Entity('productions')
 export class Production {
   @PrimaryGeneratedColumn('uuid')
@@ -32,6 +31,6 @@ export class Production {
   })
   project: Project;
 
-  @OneToMany(() => ProductionEquipment, (productionEquipment) => productionEquipment.production)
+  @OneToMany(() => ProductionEquipment, (productionEquipment) => productionEquipment.production, { cascade: true })
   productionEquipments: ProductionEquipment[];
 }
