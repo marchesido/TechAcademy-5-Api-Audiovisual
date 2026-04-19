@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ProductionsService } from './productions.service';
 import { CreateProductionDto } from './dto/create-production.dto';
@@ -26,8 +27,8 @@ export class ProductionsController {
   }
 
   @Get()
-  findAll() {
-    return this.productionsService.findAll();
+  findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
+    return this.productionsService.findAll(skip ? +skip : undefined, take ? +take : undefined);
   }
 
   @Get(':id')
