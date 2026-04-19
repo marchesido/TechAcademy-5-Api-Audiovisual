@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateProductionEquipmentDto } from './dto/create-production-equipment.dto';
 import { UpdateProductionEquipmentDto } from './dto/update-production-equipment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,12 +15,33 @@ export class ProductionEquipmentsService {
 
   async create(createProductionEquipmentDto: CreateProductionEquipmentDto) {
     const { productionId, equipmentId, ...rest } = createProductionEquipmentDto;
+    
+    // Verificando duplicação antes de salvar ou via try/catch na hora do save
+    const existing = await this.repository.findOne({
+      where: {
+        equipment: { id: equipmentId },
+        usageDate: rest.usageDate
+      }
+    });
+
+    if (existing) {
+      throw new ConflictException('Este equipamento já está agendado nesta data.');
+    }
+
     const productionEquipment = this.repository.create({
       ...rest,
       production: { id: productionId } as any,
       equipment: { id: equipmentId } as any
     });
-    return await this.repository.save(productionEquipment);
+    
+    try {
+      return await this.repository.save(productionEquipment);
+    } catch (error: any) {
+      if (error.code === '23505') { // Postgres unique violation code
+        throw new ConflictException('Este equipamento já está agendado nesta data.');
+      }
+      throw error;
+    }
   }
 
   async findAll() {
@@ -53,11 +74,45 @@ async findOne(id: string): Promise<ProductionEquipment> {
     if (equipmentId) allocation.equipment = { id: equipmentId } as any;
 
     this.repository.merge(allocation, rest);
-    return await this.repository.save(allocation);
+    
+    // Validar se há outro conflito com a mesma data e equipamento
+    if (updateDto.usageDate || updateDto.equipmentId) {
+       const existing = await this.repository.findOne({
+          where: {
+            equipment: { id: allocation.equipment.id },
+            usageDate: allocation.usageDate
+          }
+       });
+       if (existing && existing.id !== allocation.id) {
+         throw new ConflictException('Este equipamento já está agendado nesta data.');
+       }
+    }
+
+    try {
+       return await this.repository.save(allocation);
+    } catch (error: any) {
+      if (error.code === '23505') { // Postgres unique violation code
+        throw new ConflictException('Este equipamento já está agendado nesta data.');
+      }
+      throw error;
+    }
   }
 
   async remove(id: string): Promise<void> {
     const allocation = await this.findOne(id);
     await this.repository.delete(id);
+  }
+
+  async checkAvailability(equipmentId: string, usageDate: string, excludeProductionId?: string) {
+    const qb = this.repository.createQueryBuilder('pe')
+      .where('pe.equipmentId = :equipmentId', { equipmentId })
+      .andWhere('pe.usageDate = :usageDate', { usageDate });
+    
+    if (excludeProductionId) {
+      qb.andWhere('pe.productionId != :excludeProductionId', { excludeProductionId });
+    }
+    
+    const count = await qb.getCount();
+    return { available: count === 0 };
   }
 }
