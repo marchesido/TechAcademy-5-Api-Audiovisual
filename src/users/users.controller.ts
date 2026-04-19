@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ForbiddenException } from '@nestjs/common';
+import {  Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ForbiddenException , Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -21,8 +21,8 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
+    return this.usersService.findAll(skip ? +skip : undefined, take ? +take : undefined);
   }
 
   @Get(':id')
