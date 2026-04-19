@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -26,8 +27,8 @@ export class ClientsController {
   }
 
   @Get()
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
+    return this.clientsService.findAll(skip ? +skip : undefined, take ? +take : undefined);
   }
 
   @Get(':id')
