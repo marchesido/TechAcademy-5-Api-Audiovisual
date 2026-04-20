@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -7,26 +7,11 @@ import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class UsersService implements OnModuleInit {
+export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
-
-  async onModuleInit() {
-    const adminExists = await this.usersRepository.findOne({ where: { role: UserRole.ADMIN } });
-    if (!adminExists) {
-      console.log('Criando usuário administrador padrão (admin@example.com / admin123)...');
-      const passwordHash = await bcrypt.hash('admin123', 10);
-      const adminParams = this.usersRepository.create({
-        name: 'Administrador Padrão',
-        email: 'admin@example.com',
-        role: UserRole.ADMIN,
-        passwordHash,
-      });
-      await this.usersRepository.save(adminParams);
-    }
-  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.usersRepository.findOne({ where: { email: createUserDto.email } });
