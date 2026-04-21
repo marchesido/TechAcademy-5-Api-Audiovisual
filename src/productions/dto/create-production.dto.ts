@@ -18,6 +18,7 @@ export class ProductionEquipmentMinimalDto {
   equipmentId: string;
 
   @IsNumber()
+  @Type(() => Number)
   @Min(1)
   quantity: number;
 
@@ -25,6 +26,7 @@ export class ProductionEquipmentMinimalDto {
   usageDate: Date;
 
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   customDailyCost?: number;
 }

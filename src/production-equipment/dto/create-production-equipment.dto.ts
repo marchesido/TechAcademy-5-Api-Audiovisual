@@ -8,6 +8,7 @@ import {
   IsUUID, 
   Min 
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProductionEquipmentDto {
   @ApiProperty({ 
@@ -32,6 +33,7 @@ export class CreateProductionEquipmentDto {
     default: 1 
   })
   @IsInt({ message: 'A quantidade deve ser um número inteiro' })
+  @Type(() => Number)
   @Min(1, { message: 'A quantidade mínima é 1' })
   @IsNotEmpty({ message: 'A quantidade é obrigatória' })
   quantity: number;
@@ -50,6 +52,7 @@ export class CreateProductionEquipmentDto {
     required: false 
   })
   @IsNumber({ maxDecimalPlaces: 2 })
+  @Type(() => Number)
   @Min(0)
   @IsOptional()
   customDailyCost?: number;

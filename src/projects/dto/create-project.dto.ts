@@ -9,6 +9,7 @@ import {
   Length, 
   Min 
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProjectDto {
   @ApiProperty({ 
@@ -34,6 +35,7 @@ export class CreateProjectDto {
     example: 5500.00 
   })
   @IsNumber({ maxDecimalPlaces: 2 }, { message: 'O orçamento deve ser um número válido' })
+  @Type(() => Number)
   @Min(0)
   @IsNotEmpty({ message: 'O orçamento é obrigatório' })
   budget: number;
