@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductionEquipmentModule } from './production-equipment/production-equipment.module';
 import { AuthModule } from './auth/auth.module';
 import { SeedsModule } from './db/seeds/seeds.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -31,6 +32,7 @@ import { SeedsModule } from './db/seeds/seeds.module';
     ProductionEquipmentModule,
     AuthModule,
     SeedsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
