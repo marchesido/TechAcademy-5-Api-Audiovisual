@@ -22,16 +22,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Auth
-ENV JWT_SECRET=""
-ENV JWT_EXPIRATION_TIME=""
 
-# Database
-ENV DB_HOST=audiovisual-gestao-db
-ENV DB_PORT=5433
-ENV DB_USERNAME=postgres
-ENV DB_PASSWORD=postgres123
-ENV DB_NAME=audiovisual-gestao-db
 
 # Cria usuário não-root por segurança
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
