@@ -15,9 +15,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'mysql',
       host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT ?? '5432', 10),
+      port: parseInt(process.env.DB_PORT ?? '3306', 10),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
@@ -37,4 +37,4 @@ import { DashboardModule } from './dashboard/dashboard.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
