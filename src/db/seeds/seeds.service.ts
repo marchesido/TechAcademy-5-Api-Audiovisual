@@ -21,7 +21,7 @@ export class SeedsService implements OnModuleInit {
     @InjectRepository(Equipment) private equipmentRepository: Repository<Equipment>,
     @InjectRepository(Production) private productionRepository: Repository<Production>,
     @InjectRepository(ProductionEquipment) private productionEquipmentRepository: Repository<ProductionEquipment>,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     this.logger.log('Iniciando seeding automático...');
@@ -34,15 +34,13 @@ export class SeedsService implements OnModuleInit {
   }
 
   async runSeed() {
-    this.logger.log('Limpando dados existentes...');
-    
-    // Deletar em ordem para evitar violação de chaves estrangeiras
-    await this.productionEquipmentRepository.createQueryBuilder().delete().execute();
-    await this.productionRepository.createQueryBuilder().delete().execute();
-    await this.projectRepository.createQueryBuilder().delete().execute();
-    await this.equipmentRepository.createQueryBuilder().delete().execute();
-    await this.clientRepository.createQueryBuilder().delete().execute();
-    await this.userRepository.createQueryBuilder().delete().execute();
+    const existingUsers = await this.userRepository.count();
+    if (existingUsers > 0) {
+      this.logger.log('Dados já existem no banco — pulando seed.');
+      return;
+    }
+
+    this.logger.log('Nenhum dado encontrado — executando seed...');
 
     const adminPasswordHash = await bcrypt.hash('admin123', 10);
     const userPasswordHash = await bcrypt.hash('password123', 10);
