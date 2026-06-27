@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { Client } from '../clients/entities/client.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -26,6 +27,8 @@ export class ProjectsService {
     return await this.repository.find({
       relations: ['client', 'productions'],
       order: { createdAt: 'DESC' },
+      skip,
+      take,
     });
   }
 
@@ -42,7 +45,10 @@ export class ProjectsService {
     return project;
   }
 
-  async update(id: string, updateProjectDto: UpdateProjectDto): Promise<Project> {
+  async update(
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
     const project = await this.findOne(id);
 
     // Separamos clientId dos outros dados para não corromper o merge da entidade
@@ -50,7 +56,7 @@ export class ProjectsService {
 
     // Se houver alteração de cliente, atualizamos a referência real da tabela
     if (clientId) {
-      project.client = { id: clientId } as any;
+      project.client = { id: clientId } as Client;
     }
 
     this.repository.merge(project, restData);
@@ -58,7 +64,7 @@ export class ProjectsService {
   }
 
   async remove(id: string): Promise<void> {
-    const project = await this.findOne(id); // Mantemos para validar se existe
+    // const project = await this.findOne(id); // Mantemos para validar se existe
     // Utilizar .delete invoca o DELETE direto no banco de dados e aproveita o CASCADE do PostgreSQL nativamente
     await this.repository.delete(id);
   }

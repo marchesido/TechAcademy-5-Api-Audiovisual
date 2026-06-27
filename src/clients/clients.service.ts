@@ -22,9 +22,10 @@ export class ClientsService {
     return clients;
   }
 
-   async findOne(id: string): Promise<Client> {
+  async findOne(id: string): Promise<Client> {
     const client = await this.repository.findOne({ where: { id } });
-    if (!client) throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
+    if (!client)
+      throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
     return client;
   }
 

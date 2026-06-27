@@ -25,12 +25,17 @@ export class ProductionEquipmentsController {
 
   @Post()
   create(@Body() createProductionEquipmentDto: CreateProductionEquipmentDto) {
-    return this.ProductionEquipmentsService.create(createProductionEquipmentDto);
+    return this.ProductionEquipmentsService.create(
+      createProductionEquipmentDto,
+    );
   }
 
   @Get()
   findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
-    return this.ProductionEquipmentsService.findAll(skip ? +skip : undefined, take ? +take : undefined);
+    return this.ProductionEquipmentsService.findAll(
+      skip ? +skip : undefined,
+      take ? +take : undefined,
+    );
   }
 
   @Get(':id')
@@ -43,7 +48,10 @@ export class ProductionEquipmentsController {
     @Param('id') id: string,
     @Body() updateProductionEquipmentDto: UpdateProductionEquipmentDto,
   ) {
-    return this.ProductionEquipmentsService.update(id, updateProductionEquipmentDto);
+    return this.ProductionEquipmentsService.update(
+      id,
+      updateProductionEquipmentDto,
+    );
   }
 
   @Delete(':id')
@@ -55,8 +63,12 @@ export class ProductionEquipmentsController {
   checkAvailability(
     @Param('equipmentId') equipmentId: string,
     @Param('usageDate') usageDate: string,
-    @Query('excludeProductionId') excludeProductionId?: string
+    @Query('excludeProductionId') excludeProductionId?: string,
   ) {
-    return this.ProductionEquipmentsService.checkAvailability(equipmentId, usageDate, excludeProductionId);
+    return this.ProductionEquipmentsService.checkAvailability(
+      equipmentId,
+      usageDate,
+      excludeProductionId,
+    );
   }
 }

@@ -28,7 +28,10 @@ export class ProductionsController {
 
   @Get()
   findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
-    return this.productionsService.findAll(skip ? +skip : undefined, take ? +take : undefined);
+    return this.productionsService.findAll(
+      skip ? +skip : undefined,
+      take ? +take : undefined,
+    );
   }
 
   @Get(':id')

@@ -31,6 +31,10 @@ export class Production {
   })
   project: Project;
 
-  @OneToMany(() => ProductionEquipment, (productionEquipment) => productionEquipment.production, { cascade: true })
+  @OneToMany(
+    () => ProductionEquipment,
+    (productionEquipment) => productionEquipment.production,
+    { cascade: true },
+  )
   productionEquipments: ProductionEquipment[];
 }

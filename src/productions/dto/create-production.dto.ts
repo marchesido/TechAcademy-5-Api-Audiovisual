@@ -9,7 +9,7 @@ import {
   Length,
   Min,
   IsArray,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -34,7 +34,7 @@ export class ProductionEquipmentMinimalDto {
 export class CreateProductionDto {
   @ApiProperty({
     description: 'Tipo da entrega ou etapa da produção',
-    example: 'Filmagem Externa'
+    example: 'Filmagem Externa',
   })
   @IsString()
   @IsNotEmpty({ message: 'O tipo de produção é obrigatório' })
@@ -43,7 +43,7 @@ export class CreateProductionDto {
 
   @ApiProperty({
     description: 'Custo estimado ou real desta etapa',
-    example: 1200.50
+    example: 1200.5,
   })
   @IsNumber({ maxDecimalPlaces: 2 })
   @Type(() => Number)
@@ -53,7 +53,7 @@ export class CreateProductionDto {
 
   @ApiProperty({
     description: 'Data e hora de início da produção',
-    example: '2026-04-10T08:00:00Z'
+    example: '2026-04-10T08:00:00Z',
   })
   @IsDateString()
   @IsOptional()
@@ -61,7 +61,7 @@ export class CreateProductionDto {
 
   @ApiProperty({
     description: 'Data e hora prevista para término',
-    example: '2026-04-12T18:00:00Z'
+    example: '2026-04-12T18:00:00Z',
   })
   @IsDateString()
   @IsOptional()
@@ -70,7 +70,7 @@ export class CreateProductionDto {
   @ApiProperty({
     description: 'Observações técnicas ou detalhes da entrega',
     example: 'Necessário levar drone e baterias extras.',
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -78,13 +78,16 @@ export class CreateProductionDto {
 
   @ApiProperty({
     description: 'ID do projeto ao qual esta produção pertence',
-    example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+    example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
   })
   @IsUUID('4', { message: 'O ID do projeto deve ser um UUID válido' })
   @IsNotEmpty({ message: 'O vínculo com um projeto é obrigatório' })
   projectId: string;
 
-  @ApiProperty({ required: false, description: 'Equipamentos alocados na produção' })
+  @ApiProperty({
+    required: false,
+    description: 'Equipamentos alocados na produção',
+  })
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })

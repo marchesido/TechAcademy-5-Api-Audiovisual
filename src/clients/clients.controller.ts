@@ -28,7 +28,10 @@ export class ClientsController {
 
   @Get()
   findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
-    return this.clientsService.findAll(skip ? +skip : undefined, take ? +take : undefined);
+    return this.clientsService.findAll(
+      skip ? +skip : undefined,
+      take ? +take : undefined,
+    );
   }
 
   @Get(':id')

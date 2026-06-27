@@ -18,10 +18,13 @@ export class SeedsService implements OnModuleInit {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Client) private clientRepository: Repository<Client>,
     @InjectRepository(Project) private projectRepository: Repository<Project>,
-    @InjectRepository(Equipment) private equipmentRepository: Repository<Equipment>,
-    @InjectRepository(Production) private productionRepository: Repository<Production>,
-    @InjectRepository(ProductionEquipment) private productionEquipmentRepository: Repository<ProductionEquipment>,
-  ) { }
+    @InjectRepository(Equipment)
+    private equipmentRepository: Repository<Equipment>,
+    @InjectRepository(Production)
+    private productionRepository: Repository<Production>,
+    @InjectRepository(ProductionEquipment)
+    private productionEquipmentRepository: Repository<ProductionEquipment>,
+  ) {}
 
   async onModuleInit() {
     this.logger.log('Iniciando seeding automático...');

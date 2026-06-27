@@ -7,7 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.setGlobalPrefix('api/v1');
-  app.useGlobalPipes(new ValidationPipe({transform:true,disableErrorMessages:false,forbidNonWhitelisted:true}));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      disableErrorMessages: false,
+      forbidNonWhitelisted: true,
+    }),
+  );
   const config = new DocumentBuilder()
     .setTitle('Digital Matricula API')
     .setDescription(
@@ -27,4 +33,5 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory);
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+
+bootstrap().catch((err) => console.error(err));

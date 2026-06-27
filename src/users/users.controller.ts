@@ -1,4 +1,16 @@
-import {  Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ForbiddenException , Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  ForbiddenException,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,7 +34,10 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
-    return this.usersService.findAll(skip ? +skip : undefined, take ? +take : undefined);
+    return this.usersService.findAll(
+      skip ? +skip : undefined,
+      take ? +take : undefined,
+    );
   }
 
   @Get(':id')
@@ -33,11 +48,17 @@ export class UsersController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Request() req: any, @Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Request() req: { user: { id: string; role: UserRole } },
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     if (req.user.role !== UserRole.ADMIN && req.user.id !== id) {
-      throw new ForbiddenException('Você não tem permissão para editar outro usuário.');
+      throw new ForbiddenException(
+        'Você não tem permissão para editar outro usuário.',
+      );
     }
-    
+
     // Se não for admin, não deveria poder trocar o role (remover do payload caso tente dar bypass)
     if (req.user.role !== UserRole.ADMIN && updateUserDto.role) {
       delete updateUserDto.role;
@@ -53,4 +74,3 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 }
-

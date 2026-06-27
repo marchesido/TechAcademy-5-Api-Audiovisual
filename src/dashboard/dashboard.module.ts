@@ -8,9 +8,7 @@ import { Production } from '../productions/entities/production.entity';
 import { Equipment } from '../equipments/entities/equipment.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Client, Project, Production, Equipment]),
-  ],
+  imports: [TypeOrmModule.forFeature([Client, Project, Production, Equipment])],
   controllers: [DashboardController],
   providers: [DashboardService],
 })

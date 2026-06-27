@@ -1,44 +1,55 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateProductionEquipmentDto } from './dto/create-production-equipment.dto';
 import { UpdateProductionEquipmentDto } from './dto/update-production-equipment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductionEquipment } from './entities/production-equipment.entity';
 import { Repository } from 'typeorm';
+import { Production } from '../productions/entities/production.entity';
+import { Equipment } from '../equipments/entities/equipment.entity';
 
 @Injectable()
 export class ProductionEquipmentsService {
-
   constructor(
-        @InjectRepository(ProductionEquipment)
-        private readonly repository: Repository<ProductionEquipment>,
-      ) {}
+    @InjectRepository(ProductionEquipment)
+    private readonly repository: Repository<ProductionEquipment>,
+  ) {}
 
   async create(createProductionEquipmentDto: CreateProductionEquipmentDto) {
     const { productionId, equipmentId, ...rest } = createProductionEquipmentDto;
-    
+
     // Verificando duplicação antes de salvar ou via try/catch na hora do save
     const existing = await this.repository.findOne({
       where: {
         equipment: { id: equipmentId },
-        usageDate: rest.usageDate
-      }
+        usageDate: rest.usageDate,
+      },
     });
 
     if (existing) {
-      throw new ConflictException('Este equipamento já está agendado nesta data.');
+      throw new ConflictException(
+        'Este equipamento já está agendado nesta data.',
+      );
     }
 
     const productionEquipment = this.repository.create({
       ...rest,
-      production: { id: productionId } as any,
-      equipment: { id: equipmentId } as any
+      production: { id: productionId } as Production,
+      equipment: { id: equipmentId } as Equipment,
     });
-    
+
     try {
       return await this.repository.save(productionEquipment);
-    } catch (error: any) {
-      if (error.code === '23505') { // Postgres unique violation code
-        throw new ConflictException('Este equipamento já está agendado nesta data.');
+    } catch (error) {
+      const dbError = error as { code?: string };
+      if (dbError.code === '23505') {
+        // Postgres unique violation code
+        throw new ConflictException(
+          'Este equipamento já está agendado nesta data.',
+        );
       }
       throw error;
     }
@@ -47,71 +58,92 @@ export class ProductionEquipmentsService {
   async findAll(skip?: number, take?: number) {
     const production_equipment = await this.repository.find({
       relations: ['production', 'equipment'],
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
+      skip,
+      take,
     });
     return production_equipment;
   }
 
-async findOne(id: string): Promise<ProductionEquipment> {
+  async findOne(id: string): Promise<ProductionEquipment> {
     const allocation = await this.repository.findOne({
       where: { id },
       relations: ['production', 'equipment'],
     });
 
     if (!allocation) {
-      throw new NotFoundException(`Alocação de equipamento com ID ${id} não encontrada`);
+      throw new NotFoundException(
+        `Alocação de equipamento com ID ${id} não encontrada`,
+      );
     }
 
     return allocation;
   }
 
-  async update(id: string, updateDto: UpdateProductionEquipmentDto): Promise<ProductionEquipment> {
+  async update(
+    id: string,
+    updateDto: UpdateProductionEquipmentDto,
+  ): Promise<ProductionEquipment> {
     const allocation = await this.findOne(id);
     const { productionId, equipmentId, ...rest } = updateDto;
 
     // Se houver troca de projeto ou equipamento no update
-    if (productionId) allocation.production = { id: productionId } as any;
-    if (equipmentId) allocation.equipment = { id: equipmentId } as any;
+    if (productionId)
+      allocation.production = { id: productionId } as Production;
+    if (equipmentId) allocation.equipment = { id: equipmentId } as Equipment;
 
     this.repository.merge(allocation, rest);
-    
+
     // Validar se há outro conflito com a mesma data e equipamento
     if (updateDto.usageDate || updateDto.equipmentId) {
-       const existing = await this.repository.findOne({
-          where: {
-            equipment: { id: allocation.equipment.id },
-            usageDate: allocation.usageDate
-          }
-       });
-       if (existing && existing.id !== allocation.id) {
-         throw new ConflictException('Este equipamento já está agendado nesta data.');
-       }
+      const existing = await this.repository.findOne({
+        where: {
+          equipment: { id: allocation.equipment.id },
+          usageDate: allocation.usageDate,
+        },
+      });
+      if (existing && existing.id !== allocation.id) {
+        throw new ConflictException(
+          'Este equipamento já está agendado nesta data.',
+        );
+      }
     }
 
     try {
-       return await this.repository.save(allocation);
-    } catch (error: any) {
-      if (error.code === '23505') { // Postgres unique violation code
-        throw new ConflictException('Este equipamento já está agendado nesta data.');
+      return await this.repository.save(allocation);
+    } catch (error) {
+      const dbError = error as { code?: string };
+      if (dbError.code === '23505') {
+        // Postgres unique violation code
+        throw new ConflictException(
+          'Este equipamento já está agendado nesta data.',
+        );
       }
       throw error;
     }
   }
 
   async remove(id: string): Promise<void> {
-    const allocation = await this.findOne(id);
+    // const allocation = await this.findOne(id);
     await this.repository.delete(id);
   }
 
-  async checkAvailability(equipmentId: string, usageDate: string, excludeProductionId?: string) {
-    const qb = this.repository.createQueryBuilder('pe')
+  async checkAvailability(
+    equipmentId: string,
+    usageDate: string,
+    excludeProductionId?: string,
+  ) {
+    const qb = this.repository
+      .createQueryBuilder('pe')
       .where('pe.equipmentId = :equipmentId', { equipmentId })
       .andWhere('pe.usageDate = :usageDate', { usageDate });
-    
+
     if (excludeProductionId) {
-      qb.andWhere('pe.productionId != :excludeProductionId', { excludeProductionId });
+      qb.andWhere('pe.productionId != :excludeProductionId', {
+        excludeProductionId,
+      });
     }
-    
+
     const count = await qb.getCount();
     return { available: count === 0 };
   }

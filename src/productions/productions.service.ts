@@ -3,25 +3,26 @@ import { CreateProductionDto } from './dto/create-production.dto';
 import { UpdateProductionDto } from './dto/update-production.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Production } from './entities/production.entity';
+import { Project } from '../projects/entities/project.entity';
 import { Repository, DataSource } from 'typeorm';
 import { ProductionEquipment } from 'src/production-equipment/entities/production-equipment.entity';
 
 @Injectable()
 export class ProductionsService {
-  
   constructor(
-      @InjectRepository(Production)
-      private readonly repository: Repository<Production>,
-      @InjectRepository(ProductionEquipment)
-      private readonly equipmentRepository: Repository<ProductionEquipment>,
-      private readonly dataSource: DataSource,
-    ) {}
+    @InjectRepository(Production)
+    private readonly repository: Repository<Production>,
+    @InjectRepository(ProductionEquipment)
+    private readonly equipmentRepository: Repository<ProductionEquipment>,
+    private readonly dataSource: DataSource,
+  ) {}
 
   async create(createProductionDto: CreateProductionDto) {
-    const { projectId, productionEquipments, ...restData } = createProductionDto;
+    const { projectId, productionEquipments, ...restData } =
+      createProductionDto;
     const production = this.repository.create({
-       ...restData,
-       project: { id: projectId } as any
+      ...restData,
+      project: { id: projectId } as Project,
     });
 
     const savedProduction = await this.repository.save(production);
@@ -44,15 +45,25 @@ export class ProductionsService {
 
   async findAll(skip?: number, take?: number): Promise<Production[]> {
     return await this.repository.find({
-      relations: ['project', 'productionEquipments', 'productionEquipments.equipment'],
+      relations: [
+        'project',
+        'productionEquipments',
+        'productionEquipments.equipment',
+      ],
       order: { createdAt: 'DESC' },
+      skip,
+      take,
     });
   }
 
   async findOne(id: string): Promise<Production> {
     const production = await this.repository.findOne({
       where: { id },
-      relations: ['project', 'productionEquipments', 'productionEquipments.equipment'],
+      relations: [
+        'project',
+        'productionEquipments',
+        'productionEquipments.equipment',
+      ],
     });
 
     if (!production) {
@@ -62,12 +73,16 @@ export class ProductionsService {
     return production;
   }
 
-  async update(id: string, updateProductionDto: UpdateProductionDto): Promise<Production> {
-    const { projectId, productionEquipments, ...restData } = updateProductionDto;
+  async update(
+    id: string,
+    updateProductionDto: UpdateProductionDto,
+  ): Promise<Production> {
+    const { projectId, productionEquipments, ...restData } =
+      updateProductionDto;
     const production = await this.findOne(id);
-    
+
     if (projectId) {
-      production.project = { id: projectId } as any;
+      production.project = { id: projectId } as Project;
     }
 
     this.repository.merge(production, restData);
@@ -96,7 +111,7 @@ export class ProductionsService {
   }
 
   async remove(id: string): Promise<void> {
-    const production = await this.findOne(id); // validador de not found
+    // const production = await this.findOne(id); // validador de not found
     await this.repository.delete(id);
   }
 }

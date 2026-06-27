@@ -28,7 +28,10 @@ export class EquipmentsController {
 
   @Get()
   findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
-    return this.equipmentsService.findAll(skip ? +skip : undefined, take ? +take : undefined);
+    return this.equipmentsService.findAll(
+      skip ? +skip : undefined,
+      take ? +take : undefined,
+    );
   }
 
   @Get(':id')

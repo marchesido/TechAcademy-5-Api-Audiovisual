@@ -34,11 +34,14 @@ export class ProductionEquipment {
   @Column()
   equipmentId: string;
 
-  @ManyToOne(() => Production, (production) => production.id, { onDelete: 'CASCADE', nullable: false })
+  @ManyToOne(() => Production, (production) => production.id, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
   @JoinColumn({ name: 'productionId' })
   production: Production;
 
-  @ManyToOne(() => Equipment, (equipment) => equipment.id,{nullable: false})
+  @ManyToOne(() => Equipment, (equipment) => equipment.id, { nullable: false })
   @JoinColumn({ name: 'equipmentId' })
   equipment: Equipment;
 }

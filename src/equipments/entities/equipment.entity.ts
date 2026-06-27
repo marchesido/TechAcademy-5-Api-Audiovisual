@@ -35,7 +35,9 @@ export class Equipment {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => ProductionEquipment, (productionEquipment) => productionEquipment.equipment)
+  @OneToMany(
+    () => ProductionEquipment,
+    (productionEquipment) => productionEquipment.equipment,
+  )
   productionEquipments: ProductionEquipment[];
-
 }
