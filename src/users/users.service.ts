@@ -33,6 +33,7 @@ export class UsersService {
     const user = this.usersRepository.create({
       name: createUserDto.name,
       email: createUserDto.email,
+      cpf: createUserDto.cpf,
       role: createUserDto.role,
       passwordHash,
     });
@@ -41,7 +42,7 @@ export class UsersService {
 
   findAll(skip?: number, take?: number): Promise<User[]> {
     return this.usersRepository.find({
-      select: ['id', 'name', 'email', 'role', 'createdAt', 'updatedAt'],
+      select: ['id', 'name', 'email', 'cpf', 'role', 'createdAt', 'updatedAt'],
       skip,
       take,
     });
