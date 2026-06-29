@@ -34,4 +34,18 @@ export class Client {
 
   @OneToMany(() => Project, (project) => project.client)
   projects: Project[];
+
+  constructor(
+    name: string,
+    email: string,
+    phone: string,
+    cpf: string,
+    company: string,
+  ) {
+    this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.cpf = cpf;
+    this.company = company;
+  }
 }
